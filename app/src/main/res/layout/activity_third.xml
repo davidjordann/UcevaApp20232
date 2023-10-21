@@ -5,23 +5,29 @@
     android:padding="16dp">
 
     <EditText
-        android:id="@+id/usernameEditText"
+        android:id="@+id/spanishInput"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="usuario" />
-
-    <EditText
-        android:id="@+id/passwordEditText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="contraseña"
-        android:inputType="textPassword" />
+        android:hint="escribr en español" />
 
     <Button
-        android:id="@+id/loginButton"
+        android:id="@+id/translateButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="iniciar sesion" />
+        android:text="traducir" />
+
+    <EditText
+        android:id="@+id/englishOutput"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="resultado en inglish"
+        android:editable="false" />
+
+    <Button
+        android:id="@+id/backToSecondButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="volver" />
 
 
 </LinearLayout>
