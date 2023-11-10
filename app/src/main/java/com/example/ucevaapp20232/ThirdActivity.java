@@ -6,74 +6,67 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import androidx.appcompat.app.AppCompatActivity;
-
-import java.util.HashMap;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ThirdActivity extends AppCompatActivity {
 
+        private EditText spanishInput;
+    private EditText englishOutput;
+
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+     protected void onCreate(Bundle savedInstanceState) {
           super.onCreate(savedInstanceState);
-         setContentView(R.layout.activity_third);
+        setContentView(R.layout.activity_third);
 
-        final EditText spanishInput = findViewById(R.id.spanishInput);
-         Button translateButton = findViewById(R.id.translateButton);
-        final EditText englishOutput = findViewById(R.id.englishOutput);
+          spanishInput = findViewById(R.id.spanishInput);
+        Button translateButton = findViewById(R.id.translateButton);
+         englishOutput = findViewById(R.id.englishOutput);
 
-           translateButton.setOnClickListener(new View.OnClickListener() {
+        translateButton.setOnClickListener(new View.OnClickListener() {
             @Override
-              public void onClick(View view) {
-                String translatedText = translateToEnglish(spanishInput.getText().toString());
-                englishOutput.setText(translatedText);
-            }
+            public void onClick(View view) {
+                String inputText = spanishInput.getText().toString();
+                    if (!inputText.isEmpty()) {
+                      translateToEnglish(inputText);
+                 } else {
+                     englishOutput.setText("Ingresa Texto a traducir. :3");
+                    }
+             }
         });
 
-
-          final Button backToSecondButton = findViewById(R.id.backToSecondButton);
+            Button backToSecondButton = findViewById(R.id.backToSecondButton);
          backToSecondButton.setOnClickListener(new View.OnClickListener() {
             @Override
-             public void onClick(View view) {
+            public void onClick(View view) {
                 Intent intent = new Intent(ThirdActivity.this, SecondActivity.class);
-                startActivity(intent);
-                finish();
+                    startActivity(intent);
+                 finish();
             }
         });
     }
 
-     private String translateToEnglish(String spanishText) {
-             HashMap<String, String> dictionary = new HashMap<>();
-        dictionary.put("hola", "hello");
-         dictionary.put("adios", "goodbye");
-        dictionary.put("gracias", "thank you");
-        dictionary.put("por favor", "please");
-        dictionary.put("amigo", "friend");
-        dictionary.put("agua", "water");
-        dictionary.put("comida", "food");
-        dictionary.put("sí", "yes");
-        dictionary.put("no", "no");
-        dictionary.put("dia", "day");
-        dictionary.put("noche", "night");
-        dictionary.put("sol", "sun");
-        dictionary.put("luna", "moon");
-         dictionary.put("estrella", "star");
-        dictionary.put("cielo", "sky");
-        dictionary.put("tierra", "earth");
-        dictionary.put("hombre", "man");
-        dictionary.put("mujer", "woman");
-        dictionary.put("niño", "child");
-        dictionary.put("feliz", "happy");
-        dictionary.put("triste", "sad");
-        dictionary.put("amor", "love");
-         dictionary.put("odio", "hate");
+    private void translateToEnglish(String spanishText) {
+           String apiKey = "AIzaSyAS5DnKAo1sfwq4m4cR3uXgo3HyXIPfZnc";
+        TranslationApi translationApi = ApiClient.getApiService();
+          Call<TranslationResponse> call = translationApi.translate(apiKey, spanishText, "es", "en");
 
-        String translatedText = dictionary.get(spanishText.toLowerCase());
+        call.enqueue(new Callback<TranslationResponse>() {
+            @Override
+               public void onResponse(Call<TranslationResponse> call, Response<TranslationResponse> response) {
+                   if (response.isSuccessful() && response.body() != null) {
+                    String translatedText = response.body().getData().getTranslations().get(0).getTranslatedText();
+                      englishOutput.setText(translatedText);
+                } else {
+                    englishOutput.setText("Ey pequeño no digas eso");
+                }
+            }
 
-        if (translatedText == null) {
-            return "uy mi rey! intenta con otra palabra :3";
-        } else {
-            return translatedText;
-        }
+            @Override
+               public void onFailure(Call<TranslationResponse> call, Throwable t) {
+                 englishOutput.setText("Ey pequeño, hay un error en la traduccion");
+            }
+        });
     }
-    }
-
-
+}
